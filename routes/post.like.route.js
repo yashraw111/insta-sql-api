@@ -6,5 +6,4 @@ const Router = require("express").Router();
 Router.post("/:id/like",verifyToken, toggleLike);
 
 
-
 module.exports = Router;

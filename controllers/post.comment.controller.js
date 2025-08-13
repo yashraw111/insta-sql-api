@@ -30,15 +30,11 @@ exports.getCommentsByPost = async (req, res) => {
     const { post_id } = req.params;
 
     const query = `
-      SELECT c.id, c.comment, c.created_at, u.id AS user_id
-      FROM post_comments c
-      JOIN users u ON c.user_id = u.id
-      WHERE c.post_id = ?
-      ORDER BY c.created_at ASC
+      CALL getPostComments(?)
     `;
     const [comments] = await db.query(query, [post_id]);
 
-    return res.json(comments);
+    return res.json(comments[0]);
   } catch (error) {
     console.error("getCommentsByPost Error:", error);
     return res.status(500).json({ message: "Server error" });
@@ -71,12 +67,27 @@ exports.getCommentCount = async (req, res) => {
   try {
     const { post_id } = req.params;
     const [rows] = await db.query(
-      `SELECT COUNT(*) AS count FROM post_comments WHERE post_id = ?`,
+      `SELECT  getCommentCount(?) as Count `,
       [post_id]
     );
-    return res.json({ post_id, count: rows[0].count });
+    return res.json(rows);
   } catch (error) {
     console.error("getCommentCount Error:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };
+// exports.getCommentData = async (req, res) => {
+//   try {
+//     const { post_id } = req.params;
+//     const [rows] = await db.query(
+//       `SELECT *  frmtDate(?) as Date from  `,
+//       [post_id]
+//     );
+//     return res.json(rows);
+//   } catch (error) {
+//     console.error("getCommentCount Error:", error);
+//     return res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+

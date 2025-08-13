@@ -40,7 +40,7 @@ exports.CreateFeed = async (req, res) => {
 //     const user_id = req.user?.id;
 
 //     const query = `
-//       SELECT 
+//       SELECT
 //         P.id,
 //         P.user_id,
 //         P.type_feed,
@@ -92,19 +92,23 @@ exports.myAllPost = async (req, res) => {
   try {
     const user_id = req.user?.id;
 
-    const [myAllPost]= await db.query(`select * from post where user_id = ?`,[user_id])
-  
-    for (let index = 0; index < myAllPost.length; index++) {
-       const [media] = await db.query(
-      `SELECT * FROM feed_media WHERE feed_id = ?`,
-      [myAllPost[index].id]
-    );
-    myAllPost[index].media = media;
-    const [comment] = await db.query('SELECT * from post_comments where post_id = ?',[myAllPost[index].id])
-    myAllPost[index].comment = comment;
-    return res.json(myAllPost);
-    }
+    const [myAllPost] = await db.query(`select * from post where user_id = ?`, [
+      user_id,
+    ]);
 
+    for (let index = 0; index < myAllPost.length; index++) {
+      const [media] = await db.query(
+        `SELECT * FROM feed_media WHERE feed_id = ?`,
+        [myAllPost[index].id]
+      );
+      myAllPost[index].media = media;
+      const [comment] = await db.query(
+        "SELECT * from post_comments where post_id = ?",
+        [myAllPost[index].id]
+      );
+      myAllPost[index].comment = comment;
+      return res.json(myAllPost);
+    }
     return res.json(myAllPost);
   } catch (error) {
     console.error("myAllPost Error:", error);
@@ -115,7 +119,6 @@ exports.myAllPost = async (req, res) => {
 exports.postPublish = async (req, res) => {
   try {
     const { post_id } = req.body;
-
     if (!post_id) {
       return res.status(400).json({ message: "post_id is required" });
     }
@@ -155,7 +158,6 @@ exports.deletePost = async (req, res) => {
   }
 };
 
-
 exports.getPostById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -171,7 +173,10 @@ exports.getPostById = async (req, res) => {
       [postRows[0].id]
     );
     postRows[0].media = media;
-    const [comment] = await db.query('SELECT * from post_comments where post_id = ?',[postRows[0].id])
+    const [comment] = await db.query(
+      "SELECT * from post_comments where post_id = ?",
+      [postRows[0].id]
+    );
 
     postRows[0].comment = comment;
 

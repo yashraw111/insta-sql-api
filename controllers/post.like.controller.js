@@ -4,7 +4,6 @@ exports.toggleLike = async (req, res) => {
   try {
     const user_id = req.user.id;
     const { id: post_id } = req.params;
-
     // Check if record already exists
     const [check] = await db.query(
       `SELECT * FROM post_like WHERE post_id = ? AND user_id = ?`,
@@ -41,3 +40,7 @@ exports.toggleLike = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+
